@@ -17,9 +17,7 @@ main =
 
 
 type alias Model =
-  { myTotalScore : Int
-    ,myScore1 : Int
-    ,myScore2 : Int
+  { myTotalScore : List Int
     ,myQuestion1 : String
     ,myAnswer1 : String
     ,myAnswer2 : String
@@ -31,13 +29,12 @@ type alias Model =
 
 init :  (Model, Cmd Msg)
 init =
-  (Model 0 0 0 "Is the business co-located with the developers?" "Fully agree" "Agree" "Neutral" "Don't agree" "Is the scope flexible?", Cmd.none)
+  (Model [] "Is the business co-located with the developers?" "Fully agree" "Agree" "Neutral" "Don't agree" "Is the scope flexible?", Cmd.none)
 
 
 --MESSAGES
 type Msg 
-    = Questionanswered Int Int 
-    | Send
+    = Questionanswered Int Int
 
 --VIEW
 view : Model -> Html Msg
@@ -64,15 +61,15 @@ view model =
       , text (model.myAnswer4) 
       , input [ type' "radio", name "myChoice2", onClick (Questionanswered 2 -1)] []
       , br [] []
-      , button[ onClick Send ] [ text "Send" ]
+      , button[] [ text "Send" ]
       , br [] []
-      , text ("Score question 1: " ++ toString model.myScore1)
       , br [] []
-      , text ("Score question 2: " ++ toString model.myScore2) 
+      , text ("Total score: " ++  toString(List.sum model.myTotalScore))
       , br [] []
-      , text ("Total score: " ++  toString model.myTotalScore)
-      , br [] []
-      , text (if model.myTotalScore == 100 then "You have all necessary criterias to go Agile" else if ((model.myTotalScore >= 75) && (model.myTotalScore < 100)) then "You are lacking a small bunch of criterias to go agile" else "bouh")
+      , text <| let totalScore = List.sum model.myTotalScore
+            in if totalScore == 100 then "bravo"
+            else if totalScore >= 75 then "not so bad"
+            else "very bad"
       ]
 
 
@@ -82,14 +79,10 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model = 
     case msg of
         Questionanswered  1 answerid ->
-            ({ model | myScore1 = answerid }, Cmd.none )
+            ({ model | myTotalScore = [answerid] }, Cmd.none )
         Questionanswered  2 answerid ->
-            ({ model | myScore2 = answerid }, Cmd.none )
+            ({ model | myTotalScore = model.myTotalScore ++ [answerid] }, Cmd.none )
         Questionanswered _  _ -> (model, Cmd.none)
-        Send  ->
-            ({ model | myTotalScore = ((model.myScore1 + model.myScore2) // 8) * 100 }, Cmd.none )
-
-        
 
 --SUBSCRIPTIONS
 subscriptions : Model -> Sub Msg
