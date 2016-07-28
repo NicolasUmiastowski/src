@@ -2,6 +2,8 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.App as Html
 import Html.Events exposing (onClick, onCheck)
+import Dict exposing (..)
+
 
 main : Program Never
 main =
@@ -17,7 +19,7 @@ main =
 
 
 type alias Model =
-  { myTotalScore : List (Int, Int)
+  { myTotalScore : Dict Int Int
     ,myQuestion1 : String
     ,myAnswer1 : String
     ,myAnswer2 : String
@@ -29,7 +31,7 @@ type alias Model =
 
 init :  (Model, Cmd Msg)
 init =
-  (Model [] "Is the business co-located with the developers?" "Fully agree" "Agree" "Neutral" "Don't agree" "Is the scope flexible?", Cmd.none)
+  (Model Dict.empty  "Is the business co-located with the developers?" "Fully agree" "Agree" "Neutral" "Don't agree" "Is the scope flexible?", Cmd.none)
 
 
 --MESSAGES
@@ -64,8 +66,8 @@ view model =
       , button [] [ text "Send"]
       , br [] []
       , br [] []
-      {-, text ("Total score: " ++  toString(List.sum model.myTotalScore))
-      , br [] []
+      , text <| "Total score: " ++    (toString <| List.foldl (\(a,b) c->c+b ) 0 (Dict.toList model.myTotalScore))
+      {-, br [] []
       , text <| let totalScore = List.sum model.myTotalScore
             in if totalScore == 100 then "bravo"
             else if totalScore >= 75 then "not so bad"
@@ -79,9 +81,10 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model = 
     case msg of 
         Questionanswered  1 answerid ->
-            ({ model | myTotalScore = model.myTotalScore ++ [(1, answerid)] }, Cmd.none )
+            ({ model |  myTotalScore = Dict.insert 1 answerid model.myTotalScore }, Cmd.none )
+
         Questionanswered  2 answerid ->
-            ({ model | myTotalScore = model.myTotalScore ++ [(2, answerid)] }, Cmd.none )
+            ({ model | myTotalScore = Dict.insert 2 answerid model.myTotalScore }, Cmd.none )
         Questionanswered _  _ -> (model, Cmd.none)
 
 --SUBSCRIPTIONS
