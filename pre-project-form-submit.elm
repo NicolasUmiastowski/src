@@ -19,7 +19,7 @@ main =
 
 
 type alias Model =
-  { myTotalScore : Dict Int Int
+  { myScoreList : Dict Int Int
     ,myQuestion1 : String
     ,myAnswer1 : String
     ,myAnswer2 : String
@@ -66,9 +66,12 @@ view model =
       , button [] [ text "Send"]
       , br [] []
       , br [] []
-      , text <| "Total score: " ++    (toString <| List.foldl (\(a,b) c->c+b ) 0 (Dict.toList model.myTotalScore))
-      {-, br [] []
-      , text <| let totalScore = List.sum model.myTotalScore
+      , if not (Dict.isEmpty model.myScoreList) then 
+            text <| "Total score: " ++    (toString <| List.foldl (\(a,b) c->c+b ) 0 (Dict.toList model.myScoreList)) 
+          else 
+            text ""
+     {- , br [] []
+      , text <| let totalScore = List.sum model.myScoreList
             in if totalScore == 100 then "bravo"
             else if totalScore >= 75 then "not so bad"
             else "very bad"-}
@@ -77,14 +80,16 @@ view model =
 
 
 --UPDATE
+--myTotalScore : Int
+--myTotalScore = List.foldl (\(a,b) c->c+b ) 0 (Dict.toList model.myScoreList)
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model = 
     case msg of 
         Questionanswered  1 answerid ->
-            ({ model |  myTotalScore = Dict.insert 1 answerid model.myTotalScore }, Cmd.none )
+            ({ model |  myScoreList = Dict.insert 1 answerid model.myScoreList }, Cmd.none )
 
         Questionanswered  2 answerid ->
-            ({ model | myTotalScore = Dict.insert 2 answerid model.myTotalScore }, Cmd.none )
+            ({ model | myScoreList = Dict.insert 2 answerid model.myScoreList }, Cmd.none )
         Questionanswered _  _ -> (model, Cmd.none)
 
 --SUBSCRIPTIONS
