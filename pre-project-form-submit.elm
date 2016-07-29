@@ -20,6 +20,7 @@ main =
 
 type alias Model =
   { myScoreList : Dict Int Int
+    ,myTotalScore : Int
     ,myQuestion1 : String
     ,myAnswer1 : String
     ,myAnswer2 : String
@@ -31,8 +32,10 @@ type alias Model =
 
 init :  (Model, Cmd Msg)
 init =
-  (Model Dict.empty  "Is the business co-located with the developers?" "Fully agree" "Agree" "Neutral" "Don't agree" "Is the scope flexible?", Cmd.none)
+  (Model Dict.empty 0 "Is the business co-located with the developers?" "Fully agree" "Agree" "Neutral" "Don't agree" "Is the scope flexible?", Cmd.none)
 
+calculateTotalScore : Dict comparable number -> number
+calculateTotalScore scorelist = Dict.foldl (\_ v sum -> v + sum) 0 scorelist
 
 --MESSAGES
 type Msg = 
@@ -67,7 +70,7 @@ view model =
       , br [] []
       , br [] []
       , if not (Dict.isEmpty model.myScoreList) then 
-            text <| "Total score: " ++    (toString <| List.foldl (\(a,b) c->c+b ) 0 (Dict.toList model.myScoreList)) 
+            text <| "Total score: " ++    (toString <| calculateTotalScore model.myScoreList)
           else 
             text ""
      {- , br [] []
@@ -77,12 +80,11 @@ view model =
             else "very bad"-}
       ]
 
-
+     
 
 --UPDATE
---myTotalScore : Int
---myTotalScore = List.foldl (\(a,b) c->c+b ) 0 (Dict.toList model.myScoreList)
 update : Msg -> Model -> ( Model, Cmd Msg )
+
 update msg model = 
     case msg of 
         Questionanswered  1 answerid ->
@@ -90,6 +92,7 @@ update msg model =
 
         Questionanswered  2 answerid ->
             ({ model | myScoreList = Dict.insert 2 answerid model.myScoreList }, Cmd.none )
+
         Questionanswered _  _ -> (model, Cmd.none)
 
 --SUBSCRIPTIONS
