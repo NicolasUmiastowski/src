@@ -39,7 +39,7 @@ calculateTotalScore scorelist = Dict.foldl (\_ v sum -> v + sum) 0 scorelist
 
 --MESSAGES
 type Msg = 
-    Questionanswered Int Int
+    QuestionAnswered Int Int
 
 --VIEW
 view : Model -> Html Msg
@@ -47,24 +47,24 @@ view model =
   div []
       [div [] [ text (model.myQuestion1) ]
       , text (model.myAnswer1) 
-      , input [ type' "radio", name "myChoice1", onCheck (\_ -> Questionanswered 1 4)] []
+      , input [ type' "radio", name "myChoice1", onCheck (\_ -> QuestionAnswered 1 4)] []
       , text (model.myAnswer2) 
-      , input [ type' "radio", name "myChoice1", onCheck (\_ -> Questionanswered 1 3)] []
+      , input [ type' "radio", name "myChoice1", onCheck (\_ -> QuestionAnswered 1 3)] []
       , text (model.myAnswer3) 
-      , input [ type' "radio", name "myChoice1", onCheck (\_ -> Questionanswered 1 0)] []
+      , input [ type' "radio", name "myChoice1", onCheck (\_ -> QuestionAnswered 1 0)] []
       , text (model.myAnswer4) 
-      , input [ type' "radio", name "myChoice1", onCheck (\_ -> Questionanswered 1 -1)] []
+      , input [ type' "radio", name "myChoice1", onCheck (\_ -> QuestionAnswered 1 -1)] []
       , br [] []
       , text (model.myQuestion2)
       , br [] []
       , text (model.myAnswer1) 
-      , input [ type' "radio", name "myChoice2", onCheck (\_ -> Questionanswered 2 4)] []
+      , input [ type' "radio", name "myChoice2", onCheck (\_ -> QuestionAnswered 2 4)] []
       , text (model.myAnswer2) 
-      , input [ type' "radio", name "myChoice2", onCheck (\_ -> Questionanswered 2 3)] []
+      , input [ type' "radio", name "myChoice2", onCheck (\_ -> QuestionAnswered 2 3)] []
       , text (model.myAnswer3) 
-      , input [ type' "radio", name "myChoice2", onCheck (\_ -> Questionanswered 2 0)] []
+      , input [ type' "radio", name "myChoice2", onCheck (\_ -> QuestionAnswered 2 0)] []
       , text (model.myAnswer4) 
-      , input [ type' "radio", name "myChoice2", onCheck (\_ -> Questionanswered 2 -1)] []
+      , input [ type' "radio", name "myChoice2", onCheck (\_ -> QuestionAnswered 2 -1)] []
       , br [] []
       , button [] [ text "Send"]
       , br [] []
@@ -84,16 +84,14 @@ view model =
 
 --UPDATE
 update : Msg -> Model -> ( Model, Cmd Msg )
-
 update msg model = 
     case msg of 
-        Questionanswered  1 answerid ->
-            ({ model |  myScoreList = Dict.insert 1 answerid model.myScoreList }, Cmd.none )
-
-        Questionanswered  2 answerid ->
-            ({ model | myScoreList = Dict.insert 2 answerid model.myScoreList }, Cmd.none )
-
-        Questionanswered _  _ -> (model, Cmd.none)
+        QuestionAnswered  questionId answerId ->
+          let 
+            newScoreList = Dict.insert questionId answerId model.myScoreList
+        
+          in 
+          ({ model |  myScoreList = newScoreList }, Cmd.none )
 
 --SUBSCRIPTIONS
 subscriptions : Model -> Sub Msg
