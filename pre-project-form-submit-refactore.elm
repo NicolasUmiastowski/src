@@ -54,7 +54,7 @@ view model =
 createAnswerButtons : Int -> Html Msg
 createAnswerButtons valueOfTheScore = 
     div[]
-    [ div[] [text "Is you project manager co-located?"] 
+    [ div[] [text (toString valueOfTheScore)] 
     , input [ type' "radio", name ("myChoice3"), onCheck (\_ -> QuestionAnswered 2 valueOfTheScore)] []
     ]
 --UPDATE
