@@ -48,24 +48,24 @@ view model =
   div []
       [div [] [ text (model.myQuestion1) ]
       , text (model.myAnswer1.answer) 
-      , input [ type' "radio", name "myChoice1", onCheck (\_ -> QuestionAnswered 1 model.myAnswer1.myAnswer1Score)] []
+      , createAnswerButtons 1 3
       , text (model.myAnswer2.answer) 
-      , input [ type' "radio", name "myChoice1", onCheck (\_ -> QuestionAnswered 1 model.myAnswer2.myAnswer2Score)] []
+      , createAnswerButtons 1 2
       , text (model.myAnswer3.answer) 
-      , input [ type' "radio", name "myChoice1", onCheck (\_ -> QuestionAnswered 1 model.myAnswer3.myAnswer3Score)] []
+      , createAnswerButtons 1 1
       , text (model.myAnswer4.answer) 
-      , input [ type' "radio", name "myChoice1", onCheck (\_ -> QuestionAnswered 1 model.myAnswer4.myAnswer4Score)] []
+      , createAnswerButtons 1 0
       , br [] []
       , text (model.myQuestion2)
       , br [] []
       , text (model.myAnswer1.answer) 
-      , input [ type' "radio", name "myChoice2", onCheck (\_ -> QuestionAnswered 2 model.myAnswer1.myAnswer1Score)] []
+      , createAnswerButtons 2 3
       , text (model.myAnswer2.answer) 
-      , input [ type' "radio", name "myChoice2", onCheck (\_ -> QuestionAnswered 2 model.myAnswer2.myAnswer2Score)] []
+      , createAnswerButtons 2 2
       , text (model.myAnswer3.answer) 
-      , input [ type' "radio", name "myChoice2", onCheck (\_ -> QuestionAnswered 2 model.myAnswer3.myAnswer3Score)] []
+      , createAnswerButtons 2 1
       , text (model.myAnswer4.answer) 
-      , input [ type' "radio", name "myChoice2", onCheck (\_ -> QuestionAnswered 2 model.myAnswer4.myAnswer4Score)] []
+      , createAnswerButtons 2 0
       , br [] []
       , button [] [ text "Send"]
       , br [] []
@@ -81,15 +81,17 @@ view model =
             else "very bad"-}
       ]
 
-     
+createAnswerButtons : Int -> Int -> Html Msg
+createAnswerButtons  questionId answerScore = 
+     input [ type' "radio", name ("myChoice" ++ toString questionId), onCheck (\_ -> QuestionAnswered questionId answerScore)] []
 
 --UPDATE
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model = 
     case msg of 
-        QuestionAnswered  questionId answerId ->
+        QuestionAnswered  questionId answerScore ->
           let 
-            newScoreList = Dict.insert questionId answerId model.myScoreList
+            newScoreList = Dict.insert questionId answerScore model.myScoreList
         
           in 
           ({ model |  myScoreList = newScoreList }, Cmd.none )
