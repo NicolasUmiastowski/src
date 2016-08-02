@@ -29,7 +29,7 @@ type alias Model =
 
 init :  (Model, Cmd Msg)
 init =
-  (Model Dict.empty [{myText = "Fully agree", myValue = 3}, {myText = "Agree", myValue = 2}] 0 "Is the business co-located with the developers?" "Is the scope flexible?", Cmd.none)
+  (Model Dict.empty [{myText = "Fully agree", myValue = 3}, {myText = "Agree", myValue = 2}, {myText = "Neutral", myValue = 1}, {myText = "Disagree", myValue=0}] 0 "Is the business co-located with the developers?" "Is the scope flexible?", Cmd.none)
 
 calculateTotalScore : Dict comparable number -> number
 calculateTotalScore scorelist = Dict.foldl (\_ v sum -> v + sum) 0 scorelist
@@ -40,21 +40,21 @@ type Msg =
     QuestionAnswered Int Int
 
 --VIEW
-view : { b | answerScore : List { a | myValue : Int } } -> Html Msg
+view : { b | answerScore : List { a | myText : String, myValue : Int } } -> Html Msg
 view model =
   div []
-       (List.map (\score -> createAnswerButtons score.myValue) model.answerScore) {-++
+       (List.map createAnswerButtons model.answerScore) {-++
       [br [] []
       , text <| let totalScore = List.sum model.myScoreList
             in if totalScore == 100 then "bravo"
             else if totalScore >= 75 then "not so bad"
             else ""]) -}
 
-createAnswerButtons : Int -> Html Msg
+createAnswerButtons : { a | myText : String, myValue : Int } -> Html Msg
 createAnswerButtons valueOfTheScore = 
     div[]
-    [ div[] [text (toString valueOfTheScore)] 
-    , input [ type' "radio", name ("myChoice3"), onCheck (\_ -> QuestionAnswered 2 valueOfTheScore)] []
+    [ text (valueOfTheScore.myText)
+    , input [ type' "radio", name ("myChoice3"), onCheck (\_ -> QuestionAnswered 2 valueOfTheScore.myValue)] []
     ]
 --UPDATE
 update : Msg -> Model -> ( Model, Cmd Msg )
