@@ -20,7 +20,7 @@ main =
 
 type alias Model =
   { myScoreList : Dict Int Int
-    ,answerScore : List Int
+    ,answerScore : List {myText: String, myValue: Int}
     ,myTotalScore : Int
     ,myQuestion1 : String
     ,myQuestion2 : String
@@ -29,7 +29,7 @@ type alias Model =
 
 init :  (Model, Cmd Msg)
 init =
-  (Model Dict.empty [3, 2, 1, 0] 0 "Is the business co-located with the developers?" "Is the scope flexible?", Cmd.none)
+  (Model Dict.empty [{myText = "Fully agree", myValue = 3}, {myText = "Agree", myValue = 2}] 0 "Is the business co-located with the developers?" "Is the scope flexible?", Cmd.none)
 
 calculateTotalScore : Dict comparable number -> number
 calculateTotalScore scorelist = Dict.foldl (\_ v sum -> v + sum) 0 scorelist
@@ -40,16 +40,15 @@ type Msg =
     QuestionAnswered Int Int
 
 --VIEW
-view : { a | answerScore : List Int } -> Html Msg
+view : { b | answerScore : List { a | myValue : Int } } -> Html Msg
 view model =
   div []
-        (List.map createAnswerButtons model.answerScore)
-      
-     {- , br [] []
+       (List.map (\score -> createAnswerButtons score.myValue) model.answerScore) {-++
+      [br [] []
       , text <| let totalScore = List.sum model.myScoreList
             in if totalScore == 100 then "bravo"
-            else if totalScore >= 75 then "not so bad"-}
-       
+            else if totalScore >= 75 then "not so bad"
+            else ""]) -}
 
 createAnswerButtons : Int -> Html Msg
 createAnswerButtons valueOfTheScore = 
@@ -61,9 +60,9 @@ createAnswerButtons valueOfTheScore =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model = 
     case msg of 
-        QuestionAnswered  questionId answerScore ->
+        QuestionAnswered  questionId valueOfTheScore ->
           let 
-            newScoreList = Dict.insert questionId answerScore model.myScoreList
+            newScoreList = Dict.insert questionId valueOfTheScore model.myScoreList
         
           in 
           ({ model |  myScoreList = newScoreList }, Cmd.none )
