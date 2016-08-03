@@ -40,15 +40,42 @@ type Msg =
     QuestionAnswered Int Int
 
 --VIEW
-view : { b | answerScore : List { a | myText : String, myValue : Int } } -> Html Msg
-view model =
+{-view model =
   div []
-       (List.map createAnswerButtons model.answerScore) {-++
+       ((List.map createAnswerButtons model.answerScore) ++
       [br [] []
       , text <| let totalScore = List.sum model.myScoreList
             in if totalScore == 100 then "bravo"
             else if totalScore >= 75 then "not so bad"
-            else ""]) -}
+            else ""])  -}
+
+view
+    : { b
+          | answerScore : List { a | myText : String, myValue : Int }
+          , myScoreList : Dict comparable number
+    }
+    -> Html Msg
+view model =
+  let
+    answerButtons =
+      List.map createAnswerButtons model.answerScore
+      
+    scoreMessage =
+      let total = List.sum <| Dict.values <| model.myScoreList in
+      if total == 3 then "Bravo"
+      else 
+        if total <= 2 then "not so bad"
+        else ""
+  in
+    div []
+    <|answerButtons ++
+      [ br [] []
+      , text scoreMessage
+      ]
+
+
+
+
 
 createAnswerButtons : { a | myText : String, myValue : Int } -> Html Msg
 createAnswerButtons valueOfTheScore = 
