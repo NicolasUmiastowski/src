@@ -5,6 +5,8 @@ import Html.Events exposing (onClick, onCheck)
 import Dict exposing (..)
 
 
+
+
 main : Program Never
 main =
   Html.program
@@ -47,22 +49,19 @@ type Msg =
             in if totalScore == 100 then "bravo"
             else if totalScore >= 75 then "not so bad"
             else ""])  -}
-
 view
-    : { b
+    : { c
           | listOfAnswers : List { a | myText : String, myValue : Int }
-          , listOfQuestions : List String
+          , listOfQuestions : List b
           , myScoreList : Dict comparable number
     }
     -> Html Msg
 view model =
   let
     displayListOfQuestions = 
-      List.map myQuestionsDiv model.listOfQuestions
 
-    answerButtons =
-      List.map createAnswerButtons model.listOfAnswers
-      
+         List.concatMap (\x -> div[] [text "x"] :: List.map createAnswerButtons model.listOfAnswers) model.listOfQuestions
+
     scoreMessage =
       let total = List.sum <| Dict.values <| model.myScoreList in
       if total == 3 then "Bravo"
@@ -72,7 +71,7 @@ view model =
   in
     div []
     <|displayListOfQuestions ++
-      answerButtons ++
+      --answerButtons ++
       [ br [] []
       , text scoreMessage
       ] 
