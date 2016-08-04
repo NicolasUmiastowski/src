@@ -52,15 +52,15 @@ type Msg =
 view
     : { c
           | listOfAnswers : List { a | myText : String, myValue : Int }
-          , listOfQuestions : List b
+          , listOfQuestions : List String
           , myScoreList : Dict comparable number
     }
     -> Html Msg
 view model =
   let
     displayListOfQuestions = 
-
-         List.concatMap (\x -> div[] [text "x"] :: List.map createAnswerButtons model.listOfAnswers) model.listOfQuestions
+--**********to finish !----------------
+         List.concatMap (\x -> text x :: List.map createAnswerButtons model.listOfAnswers) model.listOfQuestions
 
     scoreMessage =
       let total = List.sum <| Dict.values <| model.myScoreList in
