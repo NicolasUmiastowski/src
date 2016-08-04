@@ -23,34 +23,21 @@ main =
 type alias Model =
   { myScoreList : Dict Int Int
     ,listOfAnswers : List {myText: String, myValue: Int}
-    ,myTotalScore : Int
     ,listOfQuestions :  List String
   }
  
 
 init :  (Model, Cmd Msg)
 init =
-  (Model Dict.empty [{myText = "Fully agree", myValue = 3}, {myText = "Agree", myValue = 2}, {myText = "Neutral", myValue = 1}, {myText = "Disagree", myValue=0}] 0 ["Is the business co-located with the developers?", "Is the scope flexible?"], Cmd.none)
-
-calculateTotalScore : Dict comparable number -> number
-calculateTotalScore scorelist = Dict.foldl (\_ v sum -> v + sum) 0 scorelist
-
+  (Model Dict.empty [{myText = "Fully agree", myValue = 3}, {myText = "Agree", myValue = 2}, {myText = "Neutral", myValue = 1}, {myText = "Disagree", myValue=0}]  ["Is the business co-located with the developers?", "Is the scope flexible?"], Cmd.none)
 
 --MESSAGES
 type Msg = 
     QuestionAnswered Int Int
 
 --VIEW
-{-view model =
-  div []
-       ((List.map createAnswerButtons model.answerScore) ++
-      [br [] []
-      , text <| let totalScore = List.sum model.myScoreList
-            in if totalScore == 100 then "bravo"
-            else if totalScore >= 75 then "not so bad"
-            else ""])  -}
 view
-    : { c
+    : { b
           | listOfAnswers : List { a | myText : String, myValue : Int }
           , listOfQuestions : List String
           , myScoreList : Dict comparable number
@@ -58,21 +45,25 @@ view
     -> Html Msg
 view model =
   let
+    helperForDisplayListOfQuestions answers questions =
+       (text questions :: List.map createAnswerButtons answers) 
+
     displayListOfQuestions = 
---**********to finish !----------------
-         List.concatMap (\x -> text x :: List.map createAnswerButtons model.listOfAnswers) model.listOfQuestions
+         List.concatMap (helperForDisplayListOfQuestions model.listOfAnswers) model.listOfQuestions
+
+    myTotalScore = List.sum <| Dict.values <| model.myScoreList
 
     scoreMessage =
-      let total = List.sum <| Dict.values <| model.myScoreList in
-      if total == 3 then "Bravo"
+      if myTotalScore  == 3 then "Bravo"
       else 
-        if total <= 2 then "not so bad"
+        if myTotalScore  <= 2 then "not so bad"
         else ""
   in
     div []
     <|displayListOfQuestions ++
-      --answerButtons ++
       [ br [] []
+      , text ("Your score is: " ++ toString myTotalScore)
+      , br [] []
       , text scoreMessage
       ] 
 
