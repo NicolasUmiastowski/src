@@ -37,7 +37,6 @@ type Msg =
     QuestionAnswered Int Int
 
 --VIEW
-
 view
     : { c
           | listOfAnswers : List { a | myText : String, myValue : Int }
@@ -45,6 +44,7 @@ view
           , myScoreList : Dict comparable number
     }
     -> Html Msg
+
 view model =
   let
     {-helperForDisplayListOfQuestions answers questions =
@@ -71,14 +71,15 @@ view model =
       , text scoreMessage
       ] 
 
+
 createAnswerButtons
     : { a | questionId : Int }
     -> { b | myText : String, myValue : Int }
     -> Html Msg
-createAnswerButtons questionPairs answersPairs = 
+createAnswerButtons questionPair answersPair = 
     div[]
-    [ text (answersPairs.myText)
-    , input [ type' "radio", name ("myChoice" ++ toString questionPairs.questionId), onCheck (\_ -> QuestionAnswered questionPairs.questionId answersPairs.myValue)] []
+    [ text (answersPair.myText)
+    , input [ type' "radio", name ("myChoice" ++ toString questionPair.questionId), onCheck (\_ -> QuestionAnswered questionPair.questionId answersPair.myValue)] []
     ]
 --UPDATE
 update : Msg -> Model -> ( Model, Cmd Msg )
