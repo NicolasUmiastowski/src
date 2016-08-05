@@ -22,14 +22,15 @@ main =
 
 type alias Model =
   { myScoreList : Dict Int Int
-    ,listOfAnswers : List {myText: String, myValue: Int}
-    ,listOfQuestions :  List String
+    ,listOfAnswers : List { myText: String, myValue: Int }
+    ,listOfQuestions : List { questionId: Int, questionText : String }
+    --,listOfQuestions :  List String
   }
  
 
 init :  (Model, Cmd Msg)
 init =
-  (Model Dict.empty [{myText = "Fully agree", myValue = 3}, {myText = "Agree", myValue = 2}, {myText = "Neutral", myValue = 1}, {myText = "Disagree", myValue=0}]  ["Is the business co-located with the developers?", "Is the scope flexible?"], Cmd.none)
+  (Model Dict.empty [{myText = "Fully agree", myValue = 3}, {myText = "Agree", myValue = 2}, {myText = "Neutral", myValue = 1}, {myText = "Disagree", myValue=0}]  [{questionId = 1, questionText = "Is the business co-located with the developers?"}, {questionId = 2, questionText = "Is the scope flexible?"}], Cmd.none)
 
 --MESSAGES
 type Msg = 
@@ -37,16 +38,17 @@ type Msg =
 
 --VIEW
 view
-    : { b
+    : { c
           | listOfAnswers : List { a | myText : String, myValue : Int }
-          , listOfQuestions : List String
+          , listOfQuestions : List { b | questionText : String }
           , myScoreList : Dict comparable number
     }
     -> Html Msg
+
 view model =
   let
     helperForDisplayListOfQuestions answers questions =
-       (text questions :: List.map createAnswerButtons answers) 
+       (text questions.questionText :: List.map createAnswerButtons answers) 
 
     displayListOfQuestions = 
          List.concatMap (helperForDisplayListOfQuestions model.listOfAnswers) model.listOfQuestions
@@ -66,11 +68,6 @@ view model =
       , br [] []
       , text scoreMessage
       ] 
-
-myQuestionsDiv : String -> Html a
-myQuestionsDiv listOfQuestions = 
-  div []
-  [ text <| listOfQuestions]
 
 createAnswerButtons : { a | myText : String, myValue : Int } -> Html Msg
 createAnswerButtons answersPairs = 
