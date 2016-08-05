@@ -40,21 +40,17 @@ type Msg =
 view
     : { c
           | listOfAnswers : List { a | myText : String, myValue : Int }
-          , listOfQuestions : List { b | questionId : Int }
+          , listOfQuestions :
+                List { b | questionId : Int, questionText : String }
           , myScoreList : Dict comparable number
     }
     -> Html Msg
 
 view model =
   let
-    {-helperForDisplayListOfQuestions answers questions =
-        List.concatMap  (\question -> List.map (createAnswerButtons question) answers) questions`
+   --List.concatMap (\x -> text x :: List.map createAnswerButtons model.listOfAnswers) model.listOfQuestions
 
-    displayListOfQuestions = 
-         List.concatMap (helperForDisplayListOfQuestions model.listOfAnswers) model.listOfQuestions
--}
-
-    displayListOfQuestions = List.concatMap  (\question -> List.map (createAnswerButtons question) model.listOfAnswers) model.listOfQuestions
+    displayListOfQuestions = List.concatMap  (\question ->  text question.questionText :: List.map (createAnswerButtons question.questionId) model.listOfAnswers) model.listOfQuestions
     myTotalScore = List.sum <| Dict.values <| model.myScoreList
 
     scoreMessage =
@@ -71,15 +67,11 @@ view model =
       , text scoreMessage
       ] 
 
-
-createAnswerButtons
-    : { a | questionId : Int }
-    -> { b | myText : String, myValue : Int }
-    -> Html Msg
+createAnswerButtons : Int -> { a | myText : String, myValue : Int } -> Html Msg
 createAnswerButtons questionPair answersPair = 
     div[]
     [ text (answersPair.myText)
-    , input [ type' "radio", name ("myChoice" ++ toString questionPair.questionId), onCheck (\_ -> QuestionAnswered questionPair.questionId answersPair.myValue)] []
+    , input [ type' "radio", name ("myChoice" ++ toString questionPair), onCheck (\_ -> QuestionAnswered questionPair answersPair.myValue)] []
     ]
 --UPDATE
 update : Msg -> Model -> ( Model, Cmd Msg )
