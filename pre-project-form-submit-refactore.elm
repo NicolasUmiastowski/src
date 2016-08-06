@@ -3,7 +3,7 @@ import Html.Attributes exposing (..)
 import Html.App as Html
 import Html.Events exposing (onClick, onCheck)
 import Dict exposing (..)
-
+import Debug
 
 
 
@@ -22,9 +22,8 @@ main =
 
 type alias Model =
   { myScoreList : Dict Int Int
-    ,listOfAnswers : List { myText: String, myValue: Int }
+    ,listOfAnswers : List { myText: String, myValue: Int}
     ,listOfQuestions : List { questionId: Int, questionText : String }
-    --,listOfQuestions :  List String
   }
  
 
@@ -39,10 +38,11 @@ type Msg =
 --VIEW
 view
     : { c
-          | listOfAnswers : List { a | myText : String, myValue : Int }
+          | listOfAnswers : List { a | myText : String, myValue : Int}
           , listOfQuestions :
                 List { b | questionId : Int, questionText : String }
-          , myScoreList : Dict comparable number
+          , myScoreList : Dict comparable Int
+
     }
     -> Html Msg
 
@@ -51,12 +51,21 @@ view model =
    --List.concatMap (\x -> text x :: List.map createAnswerButtons model.listOfAnswers) model.listOfQuestions
 
     displayListOfQuestions = List.concatMap  (\question ->  text question.questionText :: List.map (createAnswerButtons question.questionId) model.listOfAnswers) model.listOfQuestions
-    myTotalScore = List.sum <| Dict.values <| model.myScoreList
+    
+    maxPointsPossible : Int
+    maxPointsPossible = List.length model.listOfQuestions * 3
+
+    myCurrentNumberofPoints = List.sum <| Dict.values <| model.myScoreList
+    _ = Debug.log "Total number of points possible" maxPointsPossible
+    _ = Debug.log "My current number of Points" myCurrentNumberofPoints
+    myTotalScore : Int
+    myTotalScore = (myCurrentNumberofPoints * 100) // maxPointsPossible
+  
 
     scoreMessage =
-      if myTotalScore  == 3 then "Bravo"
+      if myTotalScore  >= 75 then "Bravo"
       else 
-        if myTotalScore  <= 2 then "not so bad"
+        if myTotalScore  < 75 then "not so bad"
         else ""
   in
     div []
@@ -74,7 +83,11 @@ createAnswerButtons questionPair answersPair =
     , input [ type' "radio", name ("myChoice" ++ toString questionPair), onCheck (\_ -> QuestionAnswered questionPair answersPair.myValue)] []
     ]
 --UPDATE
-update : Msg -> Model -> ( Model, Cmd Msg )
+
+update
+    : Msg
+    -> { a | myScoreList : Dict Int Int }
+    -> ( { a | myScoreList : Dict Int Int }, Cmd b )
 update msg model = 
     case msg of 
         QuestionAnswered  questionId answersPairs ->
