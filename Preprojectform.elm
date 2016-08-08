@@ -67,7 +67,7 @@ view model =
     div []
     <|displayListOfQuestions ++
       [ br [] []
-      , text ("Your score is: " ++ toString myTotalScore)
+      , text ("Your score is: " ++ toString myTotalScore ++ "%")
       , br [] []
       , text scoreMessage
       ] 
