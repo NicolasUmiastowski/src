@@ -1,4 +1,4 @@
-module Preprojectform exposing (Model,init,view,update)
+module Preprojectform exposing (Model,init,view,update,Msg)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -32,7 +32,7 @@ type alias Model =
 
 init :  (Model, Cmd Msg)
 init =
-  (Model Dict.empty [{myText = "Fully agree", myValue = 3}, {myText = "Agree", myValue = 2}, {myText = "Neutral", myValue = 1}, {myText = "Disagree", myValue=0}]  [{questionId = 1, questionText = "Is the business co-located with the developers?"}, {questionId = 2, questionText = "Is the scope flexible?"}], Cmd.none)
+  (Model Dict.empty [{myText = "Fuly agree", myValue = 3}, {myText = "Agree", myValue = 2}, {myText = "Neutral", myValue = 1}, {myText = "Disagree", myValue=0}]  [{questionId = 1, questionText = "Is the business co-located with the developers?"}, {questionId = 2, questionText = "Is the scope flexible?"}], Cmd.none)
 
 --MESSAGES
 type Msg = 
@@ -73,10 +73,10 @@ view model =
       ] 
 
 createAnswerButtons : Int -> { a | myText : String, myValue : Int } -> Html Msg
-createAnswerButtons questionPair answersPair = 
+createAnswerButtons questionId answersPair = 
     div[]
     [ text (answersPair.myText)
-    , input [ type' "radio", name ("myChoice" ++ toString questionPair), onCheck (\_ -> QuestionAnswered questionPair answersPair.myValue)] []
+    , input [ type' "radio", name ("myChoice" ++ toString questionId), onCheck (\_ -> QuestionAnswered questionId answersPair.myValue)] []
     ]
 --UPDATE
 
@@ -86,10 +86,10 @@ update
     -> ( { a | myScoreList : Dict Int Int }, Cmd b )
 update msg model = 
     case msg of 
-        QuestionAnswered  questionId answersPairs ->
+        QuestionAnswered  questionId answersId ->
           let 
-            newScoreList = Dict.insert questionId answersPairs model.myScoreList
-        
+            newScoreList = Dict.insert questionId answersId model.myScoreList
+     
           in 
           ({ model |  myScoreList = newScoreList }, Cmd.none )
 
