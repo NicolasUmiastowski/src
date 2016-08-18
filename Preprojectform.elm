@@ -1,4 +1,4 @@
-module Preprojectform exposing (Model,init,view,update,Msg(..),myVariable)
+module Preprojectform exposing (Model,init,view,update,Msg(..),myVariable,myTotalScore2)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
