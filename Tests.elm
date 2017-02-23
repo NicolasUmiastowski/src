@@ -18,207 +18,203 @@ all : Test
 all =
     describe "Suite"
         [ describe "Unit tests"
-            [ test "Feature : (1,2), (2,3), (3,0), (3,4), (4,5), (5,6), (7,8)" <|
-                \() ->
-                    let
-                        mdl =
-                            [(1,2), (2,3), (3,0), (3,4), (4,5), (5,6), (7,8)]
-                    in
-                        mdl
-                            |> Prolog.feature
-                            |> Expect.equal
-                                [[(1,2), (2,3), (3,0)], [(3,4), (4,5), (5,6)], [(7,8)]]
+            [ {- test "Feature : (1,2), (2,3), (3,0), (3,4), (4,5), (5,6), (7,8)" <|
+                     \() ->
+                         let
+                             mdl =
+                                  [(1,2), (2,3), (3,0), (3,4), (4,5), (5,6), (6,0), (7,8), (8,9)]
+                         in
+                             mdl
+                                 |> Prolog.feature
+                                 |> Expect.equal
+                                    [ [(1,2), (2,3)], [(3,4), (4,5), (5,6), (6,0)]]
 
-            , test "FeatureStories : (1,2), (2,3), (3,0), (4,5) == (1,2,3)" <|
+                 ,
+              -}
+              test "Feature_ : filling" <|
                 \() ->
                     let
                         mdl =
-                            [[(1,2), (2,3), (3,0)], [(3,4), (4,5), (5,6), (6,0)], [(7,8),(8,0)]]
+                            [ ( 1, 2 ), ( 2, 3 ), ( 3, 0 ), ( 3, 4 ), ( 4, 5 ), ( 5, 6 ), ( 6, 0 ) ]
                     in
                         mdl
-                            |> Prolog.featurestories
+                            |> Prolog.filling
                             |> Expect.equal
-                                [[1,2,3], [3,4,5,6],[7,8]]
+                                [ [ ( 1, 2 ), ( 2, 3 ) ], [ ( 3, 0 ), ( 3, 4 ), ( 4, 5 ), ( 5, 6 ) ], [ ( 6, 0 ) ] ]
+            , test "indexfunction : (1,2), (2,3), (3,0), (3,4), (4,5), (5,6), (7,8)" <|
+                \() ->
+                    let
+                        mdl =
+                            [ ( 1, 2 ), ( 2, 3 ), ( 3, 0 ), ( 3, 4 ), ( 4, 5 ), ( 5, 6 ), ( 6, 0 ) ]
+                    in
+                        mdl
+                            |> Prolog.indexfunction
+                            |> Expect.equal
+                                [ 2, 6 ]
+            , test "fibonacci_" <|
+                \() ->
+                    let
+                        mdl =
+                            [ 0, 1]
+                    in
+                        mdl
+                            |> Prolog.fibonacci
+                            |> Expect.equal
+                                [0,1,2,3,5,8,13,21,34]
+              {- , test "cleanlist" <|
+                 \() ->
+                     let
+                         mdl =
+                              [[(1,2), (2,3),(3,0)],[(3,4)]]
+                     in
+                         mdl
+                             |> Prolog.featurestories
+                             |> Expect.equal
+                                 [[1,2,3],[3]]
+              -}
+            , test "dependencieslist : [(1,4),(4,5), (4,8), (5,8), (7,8), (8,9)]" <|
+                \() ->
+                    let
+                        mdl =
+                            [ ( 1, 2 ), ( 2, 3 ), ( 3, 0 ), ( 3, 4 ), ( 1, 4 ), ( 4, 5 ), ( 5, 6 ), ( 6, 0 ), ( 5, 8 ), ( 7, 8 ), ( 8, 9 ), ( 9, 0 ) ]
+                    in
+                        mdl
+                            |> Prolog.dependencieslist
+                            |> Expect.equal
+                                [ [ ( 3, 4 ), ( 1, 4 ) ], [ ( 5, 8 ), ( 7, 8 ) ] ]
+            , test "ordereddependencieslist : [(1,4),(4,5), (4,8), (5,8), (7,8), (8,9)]" <|
+                \() ->
+                    let
+                        mdl =
+                            [ [ ( 3, 4 ), ( 1, 4 ) ], [ ( 5, 8 ), ( 7, 8 ), ( 3, 8 ), ( 6, 8 ) ], [ ( 4, 6 ), ( 3, 6 ), ( 2, 6 ) ] ]
+                    in
+                        mdl
+                            |> Prolog.ordereddependencieslist
+                            |> Expect.equal
+                                [ [ ( 3, 4 ), ( 1, 4 ) ], [ ( 4, 6 ), ( 3, 6 ), ( 2, 6 ) ], [ ( 5, 8 ), ( 7, 8 ), ( 3, 8 ), ( 6, 8 ) ] ]
+              {- , test "storypred2 : [[1,2,3], [3,4,5,6], [7,8]] == 4" <|
+                 \() ->
+                     let
+                         mdl =
+                             [(1,2), (2,3), (3,0), (4,3), (4,5), (5,6), (7,8)]
+                     in
+                         mdl
+                             |> Prolog.storypred2
+                             |> Expect.equal
+                                [1,2,3,4,4,5,7]
+              -}
+              {- , test "storypred3 : [[1,2,3], [3,4,5,6], [7,8]] == 4" <|
+                     \() ->
+                         let
+                             mdl =
+                                 [(1,2), (2,3), (3,0), (4,3), (4,5), (5,6), (7,8)]
+                         in
+                             mdl
+                                 |> Prolog.storypred3
+                                 |> Expect.equal
+                                    [(1,2), (5,6)]
 
-            , test "FeatureLength : (1,2,3,4) == 4" <|
-                \() ->
-                    let
-                        mdl =
-                            [[1,2,3], [3,4,5,6], [7,8]]
-                    in
-                        mdl
-                            |> Prolog.featurelength
-                            |> Expect.equal
-                                [3,4,2]
+                 , test "storypred4 : [[1,2,3], [3,4,5,6], [7,8]] == 4" <|
+                     \() ->
+                         let
+                             mdl =
+                                 [(1,2), (2,3), (3,0), (4,3), (4,5), (5,6), (7,8)]
+                         in
+                             mdl
+                                 |> Prolog.storypred4
+                                 |> Expect.equal
+                                    [(1,2), (5,6)]
+              -}
+              {- , test "Feature2Pure : (1,2), (2,3), (3,4), (4,0), (4,5)" <|
+                 \() ->
+                     let
+                         mdl =
+                             [(1,2), (2,3), (3,4), (4,0), (4,5)]
+                     in
+                         mdl
+                             |> Prolog.feature2
+                             |> Expect.equal
+                                 [(1,2), (2,3), (3,4), (4,5)]
+              -}
+              {- , test "if Player1 wins two sets" <|
+                     \() ->
+                         let
+                             mdl =
+                                 Model (MatchInProgress { player1UpToThree = Two, player2UpToThree = Three })
+                         in
+                             mdl
+                                 |> Tennismodel1612.update Player1WonSet
+                                 |> Tuple.first
+                                 |> .setstowin
+                                 |> Expect.equal
+                                     (MatchInProgress { player1UpToThree = One, player2UpToThree = Three })
 
-            , test "storypredecessor : [[1,2,3], [3,4,5,6], [7,8]] == 4" <|
-                \() ->
-                    let
-                        mdl =
-                            [(1,2), (2,3), (3,0), (4,3), (4,5), (5,6), (7,8)]
-                    in
-                        mdl
-                            |> Prolog.storypredecessor
-                            |> Expect.equal
-                               [0,2,3,3,5,6,8]
+                  , test "if Player1 wins three sets" <|
+                     \() ->
+                         let
+                             mdl =
+                                 Model (MatchInProgress { player1UpToThree = One, player2UpToThree = Three })
+                         in
+                             mdl
+                                 |> Tennismodel1612.update Player1WonSet
+                                 |> Tuple.first
+                                 |> .setstowin
+                                 |> Expect.equal
+                                     (PlayerTwoLost Three)
 
-            , test "mytest : [0,2,3,3,5,6,8]" <|
-                \() ->
-                    let
-                        mdl =
-                            [0,2,3,3,5,6,8]
-                    in
-                        mdl
-                            |> Prolog.mytest
-                            |> Expect.equal
-                               [[0], [2], [3,3], [5], [6], [8]]
-            
-            , test "mytest2 : [[0], [2], [3,3], [5], [6], [8]]" <|
-                \() ->
-                    let
-                        mdl =
-                            [[0], [2], [3,3], [5], [6], [8]]
-                    in
-                        mdl
-                            |> Prolog.mytest2
-                            |> Expect.equal
-                               [[3,3]]
+                  , test "if Player2 wins 1 set" <|
+                     \() ->
+                         let
+                             mdl =
+                                 Model (MatchInProgress { player1UpToThree = Three, player2UpToThree = Three })
+                             --progress p model = Tennismodel.update p model |> Tuple.first
+                         in
+                             mdl
+                                 |> Tennismodel1612.update Player2WonSet
+                                 |> Tuple.first
+                                 |> .setstowin
+                                 |> Expect.equal
+                                     (MatchInProgress { player1UpToThree = Three, player2UpToThree = Two })
 
-            , test "mytest3 : [(1,4),(4,5), (4,8), (5,8), (7,8), (8,9)]" <|
-                \() ->
-                    let
-                        mdl =
-                            [(1,4),(4,5), (4,8), (5,8), (7,8), (8,9)]
-                    in
-                        mdl
-                            |> Prolog.mytest3
-                            |> Expect.equal
-                               [[8,8,8]]
+                 , test "if Player2 wins 2 sets" <|
+                     \() ->
+                         let
+                             mdl =
+                                 Model (MatchInProgress { player1UpToThree = Three, player2UpToThree = Two })
+                             --progress p model = Tennismodel.update p model |> Tuple.first
+                         in
+                             mdl
+                                 |> Tennismodel1612.update Player2WonSet
+                                 |> Tuple.first
+                                 |> .setstowin
+                                 |> Expect.equal
+                                     (MatchInProgress { player1UpToThree = Three, player2UpToThree = One })
 
-            {-, test "storypred2 : [[1,2,3], [3,4,5,6], [7,8]] == 4" <|
-                \() ->
-                    let
-                        mdl =
-                            [(1,2), (2,3), (3,0), (4,3), (4,5), (5,6), (7,8)]
-                    in
-                        mdl
-                            |> Prolog.storypred2
-                            |> Expect.equal
-                               [1,2,3,4,4,5,7] -}
-            
-            {-, test "storypred3 : [[1,2,3], [3,4,5,6], [7,8]] == 4" <|
-                \() ->
-                    let
-                        mdl =
-                            [(1,2), (2,3), (3,0), (4,3), (4,5), (5,6), (7,8)]
-                    in
-                        mdl
-                            |> Prolog.storypred3
-                            |> Expect.equal
-                               [(1,2), (5,6)]
+                 , test "if Player2 wins 3 sets" <|
+                     \() ->
+                         let
+                             mdl =
+                                 Model (MatchInProgress { player1UpToThree = Three, player2UpToThree = One })
+                             --progress p model = Tennismodel.update p model |> Tuple.first
+                         in
+                             mdl
+                                 |> Tennismodel1612.update Player2WonSet
+                                 |> Tuple.first
+                                 |> .setstowin
+                                 |> Expect.equal
+                                     (PlayerOneLost Three)
 
-            , test "storypred4 : [[1,2,3], [3,4,5,6], [7,8]] == 4" <|
-                \() ->
-                    let
-                        mdl =
-                            [(1,2), (2,3), (3,0), (4,3), (4,5), (5,6), (7,8)]
-                    in
-                        mdl
-                            |> Prolog.storypred4
-                            |> Expect.equal
-                               [(1,2), (5,6)]
-            -}
-
-
-            {-, test "Feature2Pure : (1,2), (2,3), (3,4), (4,0), (4,5)" <|
-                \() ->
-                    let
-                        mdl =
-                            [(1,2), (2,3), (3,4), (4,0), (4,5)]
-                    in
-                        mdl
-                            |> Prolog.feature2
-                            |> Expect.equal
-                                [(1,2), (2,3), (3,4), (4,5)] -}
-               
-             {-, test "if Player1 wins two sets" <|
-                \() ->
-                    let
-                        mdl =
-                            Model (MatchInProgress { player1UpToThree = Two, player2UpToThree = Three })
-                    in
-                        mdl
-                            |> Tennismodel1612.update Player1WonSet
-                            |> Tuple.first
-                            |> .setstowin
-                            |> Expect.equal
-                                (MatchInProgress { player1UpToThree = One, player2UpToThree = Three })
-
-             , test "if Player1 wins three sets" <|
-                \() ->
-                    let
-                        mdl =
-                            Model (MatchInProgress { player1UpToThree = One, player2UpToThree = Three })
-                    in
-                        mdl
-                            |> Tennismodel1612.update Player1WonSet
-                            |> Tuple.first
-                            |> .setstowin
-                            |> Expect.equal
-                                (PlayerTwoLost Three)
-
-             , test "if Player2 wins 1 set" <|
-                \() ->
-                    let
-                        mdl =
-                            Model (MatchInProgress { player1UpToThree = Three, player2UpToThree = Three })
-                        --progress p model = Tennismodel.update p model |> Tuple.first
-                    in
-                        mdl
-                            |> Tennismodel1612.update Player2WonSet
-                            |> Tuple.first
-                            |> .setstowin
-                            |> Expect.equal
-                                (MatchInProgress { player1UpToThree = Three, player2UpToThree = Two })
-
-            , test "if Player2 wins 2 sets" <|
-                \() ->
-                    let
-                        mdl =
-                            Model (MatchInProgress { player1UpToThree = Three, player2UpToThree = Two })
-                        --progress p model = Tennismodel.update p model |> Tuple.first
-                    in
-                        mdl
-                            |> Tennismodel1612.update Player2WonSet
-                            |> Tuple.first
-                            |> .setstowin
-                            |> Expect.equal
-                                (MatchInProgress { player1UpToThree = Three, player2UpToThree = One })
-
-            , test "if Player2 wins 3 sets" <|
-                \() ->
-                    let
-                        mdl =
-                            Model (MatchInProgress { player1UpToThree = Three, player2UpToThree = One })
-                        --progress p model = Tennismodel.update p model |> Tuple.first
-                    in
-                        mdl
-                            |> Tennismodel1612.update Player2WonSet
-                            |> Tuple.first
-                            |> .setstowin
-                            |> Expect.equal
-                                (PlayerOneLost Three)
-
-            , test "if Player1 wins three sets" <|
-                \() ->
-                    let
-                        mdl =
-                            Model (MatchInProgress { player1UpToThree = One, player2UpToThree = Three })
-                    in
-                        mdl
-                            |> List.foldl (\msg model -> update msg model |> Tuple.first) mdl
-                            |> .setstowin
-                            |> Expect.equal
-                                (PlayerTwoLost Three) -}
+                 , test "if Player1 wins three sets" <|
+                     \() ->
+                         let
+                             mdl =
+                                 Model (MatchInProgress { player1UpToThree = One, player2UpToThree = Three })
+                         in
+                             mdl
+                                 |> List.foldl (\msg model -> update msg model |> Tuple.first) mdl
+                                 |> .setstowin
+                                 |> Expect.equal
+                                     (PlayerTwoLost Three)
+              -}
             ]
         ]
