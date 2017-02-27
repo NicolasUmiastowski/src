@@ -1,10 +1,8 @@
 module Prolog exposing (..)
 
 import Html exposing (text, div, br)
-import List exposing (..)
-import List.Extra exposing (..)
-
-
+import List exposing (length, isEmpty, concat, concatMap)
+import List.Extra exposing (groupWhileTransitively )
 --import String exposing (toInt)
 --import Debug
 --import String exposing (join,toInt)
@@ -12,147 +10,244 @@ import List.Extra exposing (..)
 
 main : Html.Html a
 main =
-    div []
-        [ text <| toString <| tasklist
-        , br [] []
-        , text ("Tasks number = " ++ toString tasksnumber)
-          --, br [] []
-          --, text ("Feature = " ++ toString feature)
-          --, br [] []
-          --, text ("Feature2 = " ++ toString feature2)
-        , br [] []
-        , text ("Fibonacci = " ++ toString (fibonacci [ 0, 1 ]))
-        , br [] []
-        , text ("Fib= " ++ toString (fib))
-        ]
+  div []
+  [
+    text <| toString <| tasklist
+    , br [] []
+    , text ("Tasks number = " ++ toString tasksnumber)
+    , br [] []
+    , text ("Feature = " ++ toString (feature_ (feature tasklist) ))
+    --, br [] []
+    --, text ("Feature2 = " ++ toString feature2)
+    --, br [] []
+    --, text ("Feature = " ++ toString (feature tasklist))
 
-
-
---fibolist : List number
---fibolist = [0,1,2, 3]
-
-
-xxx : List number
-xxx =
-    [ 0, 1 ]
-
-
-fibonacci_ : List number -> Maybe (List number)
-fibonacci_ fibolist =
-    if (List.length fibolist < 15) then
-        let
-            lastlistelm =
-                Maybe.withDefault 0 (List.Extra.last fibolist)
-
-            beforelastlistelm =
-                Maybe.withDefault 0 (List.Extra.getAt ((List.length fibolist) - 2) fibolist)
-        in
-            Just
-                (List.singleton (lastlistelm + beforelastlistelm)
-                    |> List.append fibolist
-                )
-    else
-        Nothing
-
-
-fibonacci : List Int -> List Int
-fibonacci initlist =
-    List.Extra.unique (List.concat (List.Extra.iterate fibonacci_ initlist))
-
-
-fib : List Int
-fib =
-    fib_ [ 1, 0 ]
-
-
-fib_ : List Int -> List Int
-fib_ ints =
-    case ints of
-        hd :: nxt :: tl ->
-            if 10 <= List.length ints then
-                ints
-            else
-                fib_ <| (hd + nxt) :: ints
-
-        _ ->
-            ints
-
-
-
-{-
-   **********************************
-   fibonacci : Int -> List Int
-   fibonacci n =
-       let
-           iterator : ( Int, Int, Int ) -> Maybe ( Int, Int, Int )
-           iterator ( i, a, b ) =
-               if i < n then
-                   Just ( i + 1, b, a + b )
-               else
-                   Nothing
-       in
-           ( 1, 0, 1 )
-               |> List.Extra.iterate iterator
-               |> List.map (\( i, a, b ) -> b)
-
--}
-
-
-tasklist : List ( Int, Int )
-tasklist =
-    [ ( 1, 4 ), ( 4, 5 ), ( 4, 8 ), ( 5, 8 ), ( 7, 8 ), ( 8, 9 ) ]
-
+    ]
 
 tasksnumber : Int
-tasksnumber =
-    List.length tasklist
+tasksnumber = List.length tasklist
+
+recursive : Int -> Int
+recursive x = 
+  if x < 16 then
+    recursive (x^2)
+  else 
+    x
+
+
+newslist : List a
+newslist = []
 
 
 
-{- feature : List (Int, Int) -> List (List ( Int, Int ))
-   feature valueslist =
-     List.filter (\
-         (a, b)  -> Tuple.second (a, b) == (Tuple.first (a, b) + 1) || b == 0)
-          valueslist
-     |> List.sort
-     |> List.Extra.groupWhileTransitively  (\x y -> Tuple.second x == Tuple.first y)
--}
-
+tasklist : List (Int, Int)
+tasklist = [(1,2), (2,3),(3,0), (4,5), (3,0)]
 
 feature : List ( number, number1 ) -> List (List ( number, number1 ))
-feature featurelist =
-    List.Extra.groupsOfVarying (indexfunction featurelist) featurelist
+feature tasklist = 
+ 
+ List.map (\tuple -> 
+  if tuple /= (3,0) then
+    tuple ::  newslist
+      
+  else 
+    newslist) tasklist
+
+feature_ : List (List a) -> List (List a)
+feature_ x = 
+  case x of 
+    hd :: nxt :: tl ->
+      if nxt /= [] then
+        (List.append hd nxt) :: tl
+      else 
+        hd :: nxt :: tl
+    _ ->
+      x
 
 
-emptylist : List a
-emptylist =
-    []
+  {-(feature 
+   (List.map (\tuple -> 
+            if (Tuple.second tuple) /= 0 then
+              tuple 
+            else 
+              (0,0) ) tasklist))  :: []-}
+          
 
+            
+ 
+  
+--featurestories : List (List ( Int, Int )) -> List (List Int)
+--featurestories = 
+--  List.map (List.map Tuple.first)
 
-filling : List ( a, number ) -> List (List ( a, number ))
-filling featurelist =
-    (List.Extra.groupWhileTransitively
-        (\x y -> Tuple.second y == (Tuple.second x + 1) || Tuple.first y == Tuple.first x)
-        featurelist
+--featurelength : List (List Int) -> List Int
+--featurelength = 
+--  List.map List.length
+
+{-prenumber : List ( Int, Int ) -> List Int
+prenumber tasklist = 
+  List.concat
+    (List.Extra.group (List.sort (List.map (\tuple -> Tuple.second tuple) tasklist))
+    |> List.filter (\listoftuple2nd-> List.length listoftuple2nd > 1)
     )
+  
+multiplepre : List (Int, Int) -> List ( Int, Int )
+multiplepre tasklist = 
+  List.filter (\ tuple -> List.member (Tuple.second tuple) (prenumber tasklist) ) 
+  tasklist -}
 
 
-indexfunction : List ( number, number1 ) -> List Int
-indexfunction valuelist =
-    List.Extra.findIndices (\tuple -> Tuple.second tuple == 0) valuelist
+dependencieslist : List (Int, Int) -> List (List (Int, Int))
+dependencieslist list_ = 
+  List.filter (\sublist -> List.length sublist > 1) (
+  List.Extra.groupWhile (\x y -> Tuple.second x == Tuple.second y) list_)
 
-
-dependencieslist : List ( Int, Int ) -> List (List ( Int, Int ))
-dependencieslist list_ =
-    List.filter (\sublist -> List.length sublist > 1)
-        (List.Extra.groupWhile (\x y -> Tuple.second x == Tuple.second y) list_)
-
-
-ordereddependencieslist : List (List ( Int, Int )) -> List (List ( Int, Int ))
-ordereddependencieslist x =
-    List.sortBy List.length x
-
+ordereddependencieslist : List (List (Int, Int)) -> List (List (Int, Int))
+ordereddependencieslist x = 
+  List.sortBy List.length x
 
 prednumber : List a -> List Int -> List Int
-prednumber x y =
-    (List.length x) :: y
+prednumber x y = 
+  (List.length x) :: y 
+
+{-
+prenumber : List (Int, Int) -> List Int
+prenumber tasklist = 
+ List.concat (
+  List.Extra.group (List.sort (List.map (\tuple -> Tuple.second tuple) tasklist))
+  |> List.filter (\listoftuple2nd-> List.length listoftuple2nd > 1)
+  )
+
+multiplepre : List ( Int , Int ) -> List ( Int , Int )
+multiplepre tasklist = 
+ List.filter (\ a -> List.member (Tuple.second a) (prenumber tasklist)) 
+ tasklist
+
+
+
+
+
+
+storypredecessor : List ( a1, comparable ) -> List comparable
+storypredecessor featurestorieslist = 
+ List.sort (List.map (\x -> Tuple.second x) featurestorieslist)
+
+mytest : List a -> List (List a)
+mytest z = 
+  List.Extra.group z
+
+mytest2 : List (List a) -> List (List a)
+mytest2 z = 
+  List.filter (\x-> List.length x > 1) z
+
+
+
+  
+storypred4 listoftuples = 
+  List.filter (\ a -> List.member (Tuple.second a) 
+    (storypredecessor listoftuples) )
+ listoftuples -}
+
+
+  --[(1,2), (2,3), (4,3)] -> [(2,3), (4,3)]
+
+{-featurestories : List (List ( Int, Int )) -> List (List Int)
+featurestories listoflists = 
+  List.map (List.map Tuple.first) listoflists
+
+featurelength : List (List Int) -> List Int
+featurelength listoflists = 
+  List.map List.length listoflists -}
+
+{-featurestoriestail : List (List (Int, Int)) -> List (List (Int, Int))
+featurestoriestail x = Maybe.withDefault [[]] (List.tail x)
+
+featurestorieshead : List (List ( Int, Int )) -> List ( Int, Int )
+featurestorieshead x =
+  Maybe.withDefault [(0,0)] (List.head
+  (
+  featurestoriestail x
+  ))
+
+featurestoriesrecursive x = List.map  (featurestorieshead x) x
+-}
+--feature2 =  List.filter (\[(a,b)] -> Tuple.second (a,b) > 0) (feature tasklist)
+
+
+
+
+{-feature : List (Int, Int)
+feature = 
+  List.filter (\ 
+      (a, b)  -> Tuple.second (a, b) == (Tuple.first (a, b) + 1) )
+       tasklist
+
+
+
+feature2 : List ( Int, Int )
+feature2 = 
+ List.concatMap (\x ->
+  List.filter (\(a,b) -> a == Tuple.second x || b == Tuple.first x) feature)
+   feature
+  |> List.sort -}
+
+
+{-feature2 : List ( Int, Int )
+feature2 = 
+ List.concatMap (
+   \x ->
+   List.append [x] ( List.filter (\(a,b) -> a == Tuple.second x ) feature)
+  )feature -}
+
+
+
+
+{-feature3 : List (List ( Int, Int ))
+feature3 = 
+  List.filter (\x -> not (isEmpty x)) feature2
+
+feature4 : List ( Int, Int )
+feature4 = concat feature3-}
+{-isok (a,b) x =
+  if a == Tuple.second x then
+    Just (a,b)
+  else
+    Nothing -}
+
+
+{-feature4 = 
+  if Tuple.second feature2 == Tuple.first feature3
+   then -}
+
+--feature3 = if (Tuple.second (feature2) == Tuple.first 
+
+
+{- post : number -> number
+post a =
+  a + 1
+
+pre : number -> number
+pre a = post <| post <| post a -}
+
+
+
+{-recursion a = List.map (\a->(post a)) (List.range 0 (pre a))
+
+post_ : Int -> Int -> Int
+post_ a b = 
+  a + b
+ 
+pre_ : Int -> List Int
+pre_ a  = 
+  a :: (List.append [post a] [pre a] )
+
+pres_ : Int -> List Int
+pres_ a = 
+ List.concat <| List.map (\a -> (pre_ a)) (pre_ a)
+
+
+
+
+  -}
+
+ 

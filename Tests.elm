@@ -18,50 +18,38 @@ all : Test
 all =
     describe "Suite"
         [ describe "Unit tests"
-            [ {- test "Feature : (1,2), (2,3), (3,0), (3,4), (4,5), (5,6), (7,8)" <|
-                     \() ->
-                         let
-                             mdl =
-                                  [(1,2), (2,3), (3,0), (3,4), (4,5), (5,6), (6,0), (7,8), (8,9)]
-                         in
-                             mdl
-                                 |> Prolog.feature
-                                 |> Expect.equal
-                                    [ [(1,2), (2,3)], [(3,4), (4,5), (5,6), (6,0)]]
+            [ test "recursive" <|
+                \() ->
+                    let
+                        mdl = 2
+                    in
+                        mdl
+                            |> Prolog.recursive
+                            |> Expect.equal
+                                2
+            
+            , test "feature" <|
+                \() ->
+                    let
+                        mdl = [(1,2), (2,3),(3,0), (4,5), (3,0)]
+                    in
+                        mdl
+                            |> Prolog.feature
+                            |> Expect.equal
+                                [[(1,2), (2,3)]]
+            
 
-                 ,
-              -}
-              test "Feature_ : filling" <|
+            , test "feature_" <|
                 \() ->
                     let
-                        mdl =
-                            [ ( 1, 2 ), ( 2, 3 ), ( 3, 0 ), ( 3, 4 ), ( 4, 5 ), ( 5, 6 ), ( 6, 0 ) ]
+                        mdl = [[(1,2)], [(2,3)],[]]
                     in
                         mdl
-                            |> Prolog.filling
+                            |> Prolog.feature_
                             |> Expect.equal
-                                [ [ ( 1, 2 ), ( 2, 3 ) ], [ ( 3, 0 ), ( 3, 4 ), ( 4, 5 ), ( 5, 6 ) ], [ ( 6, 0 ) ] ]
-            , test "indexfunction : (1,2), (2,3), (3,0), (3,4), (4,5), (5,6), (7,8)" <|
-                \() ->
-                    let
-                        mdl =
-                            [ ( 1, 2 ), ( 2, 3 ), ( 3, 0 ), ( 3, 4 ), ( 4, 5 ), ( 5, 6 ), ( 6, 0 ) ]
-                    in
-                        mdl
-                            |> Prolog.indexfunction
-                            |> Expect.equal
-                                [ 2, 6 ]
-            , test "fibonacci_" <|
-                \() ->
-                    let
-                        mdl =
-                            [ 0, 1]
-                    in
-                        mdl
-                            |> Prolog.fibonacci
-                            |> Expect.equal
-                                [0,1,2,3,5,8,13,21,34]
-              {- , test "cleanlist" <|
+                                [[(1,2), (2,3)], []]
+
+            {-, test "cleanlist" <|
                  \() ->
                      let
                          mdl =
@@ -70,8 +58,8 @@ all =
                          mdl
                              |> Prolog.featurestories
                              |> Expect.equal
-                                 [[1,2,3],[3]]
-              -}
+                                 [[1,2,3],[3]] -}
+              
             , test "dependencieslist : [(1,4),(4,5), (4,8), (5,8), (7,8), (8,9)]" <|
                 \() ->
                     let
