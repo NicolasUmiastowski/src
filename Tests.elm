@@ -26,28 +26,133 @@ all =
                         mdl
                             |> Prolog.recursive
                             |> Expect.equal
-                                2
+                                16
             
             , test "feature" <|
                 \() ->
                     let
-                        mdl = [(1,2), (2,3),(3,0), (4,5), (3,0)]
+                        mdl = [(1,2), (2,3),(3,0),(4,5),(5,6),(6,0)]
                     in
                         mdl
                             |> Prolog.feature
                             |> Expect.equal
-                                [[(1,2), (2,3)]]
+                                [[(1,2)], [(2,3)], [], [(4,5)], [(5,6)], []]
             
 
             , test "feature_" <|
                 \() ->
                     let
-                        mdl = [[(1,2)], [(2,3)],[]]
+                        mdl = [[(1,2)], [(2,3)], [], [(4,5)], [(5,6)], []]
                     in
                         mdl
                             |> Prolog.feature_
                             |> Expect.equal
-                                [[(1,2), (2,3)], []]
+                                [[(1,2), (2,3)],[(4,5), (5,6)] ]
+
+            , test "global feature" <|
+                \() ->
+                    let
+                        mdl = [(1,2), (2,3),(3,0),(4,5),(5,6),(6,0)]
+                    in
+                        mdl
+                            |> Prolog.feature
+                            |> Prolog.feature_ 
+                            |> Expect.equal
+                                [[(1,2), (2,3)],[(4,5), (5,6)] ]
+
+            , test "Little recursion" <|
+                \() ->
+                    let
+                        mdl = [[(1,2), (2,3)]
+                               ,[(3,4), (2,4), (4,5), (5,6)]
+                               ,[(5,8), (7,8), (8,9), (9,10)] ]
+                    in
+                        mdl
+                            |> Prolog.littlerecursion
+                            |> Expect.equal
+                                [[(5,8), (7,8), (8,9), (9,10)] ]
+
+            {-, test "Reverse recursivey" <|
+                \() ->
+                    let
+                        mdl = [[(1,2), (2,3)]
+                               ,[(3,4), (2,4), (4,5), (5,6)]
+                               ,[(4,8), (5,8), (7,8), (8,9), (9,10)] ]
+                    in
+                        mdl
+                            |> Prolog.reverserecursive
+                            |> Expect.equal
+                                [(3,4), (2,4), (4,5), (5,6)]
+            -}
+            , test "Cross feature" <|
+                \() ->
+                    let
+                        mdl = [[(3,4), (7,8)]
+                               ,[(3,4), (2,4)]
+                               , [(3,4), (4,8)]
+                               ,[(4,8), (5,8), (7,8), (8,9), (9,10)] 
+
+                               ]
+                    in
+                        mdl
+                            |> Prolog.crossfeature
+                            |> Expect.equal
+                            [[(3,4), (2,4), (4,8), (5,8)]]
+
+
+
+            , test "Last value" <|
+                \() ->
+                    let
+                        mdl = [(1,2), (2,3), (3,4)]
+                    in
+                        mdl
+                            |> Prolog.lastvalue
+                            |> Expect.equal
+                                4
+
+            , test "First value" <|
+                \() ->
+                    let
+                        mdl = [(1,2), (2,3), (3,4)]
+                    in
+                        mdl
+                            |> Prolog.firstvalue
+                            |> Expect.equal
+                                1
+
+            , test "All values" <|
+                \() ->
+                    let
+                        mdl = [(1,2), (2,3), (3,4)]
+                    in
+                        mdl
+                            |> Prolog.allvalues
+                            |> Expect.equal
+                                [1,2,3,4]
+
+            , test "List last" <|
+                \() ->
+                    let
+                        mdl = [(1,2), (2,3), (3,4), (4,5)]
+                    in
+                        mdl
+                            |> Prolog.listlast
+                            |> Expect.equal
+                                [(4,5)]
+
+            , test "List last unsoundscape" <|
+                \() ->
+                    let
+                        mdl = [(1,2), (2,3), (3,4), (4,5), (10,10)]
+                    in
+                        mdl
+                            |> Prolog.last
+                            |> Expect.equal
+                                [(10,10)]
+
+
+
 
             {-, test "cleanlist" <|
                  \() ->

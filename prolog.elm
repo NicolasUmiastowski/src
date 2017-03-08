@@ -35,9 +35,6 @@ recursive x =
     x
 
 
-newslist : List a
-newslist = []
-
 
 
 tasklist : List (Int, Int)
@@ -45,24 +42,115 @@ tasklist = [(1,2), (2,3),(3,0), (4,5), (3,0)]
 
 feature : List ( number, number1 ) -> List (List ( number, number1 ))
 feature tasklist = 
- 
  List.map (\tuple -> 
-  if tuple /= (3,0) then
-    tuple ::  newslist
-      
+  if Tuple.second tuple /= 0 then
+    [tuple] 
   else 
-    newslist) tasklist
+    []) tasklist
 
-feature_ : List (List a) -> List (List a)
-feature_ x = 
-  case x of 
+
+feature_ : List (List b) -> List (List b)
+feature_ listoflists = 
+  case listoflists of 
     hd :: nxt :: tl ->
-      if nxt /= [] then
-        (List.append hd nxt) :: tl
-      else 
-        hd :: nxt :: tl
+      if (List.any List.isEmpty listoflists) then
+        feature_ 
+        (if nxt /= [] then
+          List.append hd nxt :: tl
+        else
+          List.append tl [hd])
+      else
+        listoflists
     _ ->
-      x
+      listoflists
+
+littlerecursion : List (List (Int, Int)) -> List (List (Int, Int))
+littlerecursion listoflists = 
+ case listoflists of
+    hd :: nxt :: tl ->
+     littlerecursion <| nxt :: tl
+    _ ->
+      listoflists
+
+{-reverserecursive : List (List (Int, Int)) -> List (List (Int, Int)) 
+reverserecursive listoflists = 
+ case listoflists of
+    hd :: nxt :: tl ->
+      if List.length listoflists > 3 then
+        reverserecursive ((\tuple -> 
+              List.member (Tuple.first tuple)
+                 (List.range (firstvalue hd) (lastvalue hd))
+            ) nxt) 
+      else
+        listoflists
+      
+    nxt :: tl -> 
+      [[(1,1)]]
+
+    _ -> 
+      [[(1,1)]] -}
+
+
+crossfeature : List (List (Int, Int)) -> List ( List (Int, Int))
+crossfeature listoflists = 
+  case listoflists of
+    [] -> []
+    
+    tl :: [] ->
+      [tl]
+
+    nxt :: tl ->
+      if nxt /= [(4,8), (5,8), (7,8), (8,9), (9,10)]  then
+       crossfeature (List.append tl [(List.filter (\tuple -> List.member tuple 
+            (List.concat tl)) nxt)])
+      else
+        listoflists
+      
+    
+
+      
+    
+
+
+firstvalue : List (Int, Int) -> Int
+firstvalue listoftuples =
+  case listoftuples of 
+  hd :: tl ->
+   Tuple.first hd
+  _ ->
+    0
+
+lastvalue : List (Int, Int) -> Int
+lastvalue listoftuples = 
+  case (List.reverse listoftuples) of
+    hd :: tl ->
+      Tuple.second hd
+    _ -> 
+      0
+
+allvalues : List (Int, Int) -> List Int
+allvalues listoftuples = 
+  List.range (firstvalue listoftuples) 
+  (lastvalue <| listoftuples)
+
+listlast : List (Int, Int) -> List (Int, Int)
+listlast listoftuples = 
+  case listoftuples of
+    hd :: tl ->
+      if List.length listoftuples > 1 then
+        listlast <| tl
+      else
+        listoftuples
+    _ ->
+      listoftuples
+
+last : List a -> List a
+last list =
+    case list of
+        [] -> []
+        lastEl :: [] -> [lastEl]
+        el :: rest ->  last rest
+
 
 
   {-(feature 
