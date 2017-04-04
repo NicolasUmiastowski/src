@@ -12,12 +12,14 @@ main =
     , text ("Feature = " ++ toString (List.maximum [(5,8), (7,8), (8,9), (9,10)]))
     ]
 
-tasklist2 : List (Int, Int)
-tasklist2 = [(1,2),(2,3),(3,0),(2,4),(3,4),(4,5)]
+pathlist : List (Int, Int)
+pathlist = [(1,2),(2,3),(3,0),(2,4),(3,4),(4,5)]
 
 fromlasttofirst : List (Int, Int) -> List (Int, Int)
-fromlasttofirst tasklist2 = 
-  case tasklist2 of
+fromlasttofirst pathlist = 
+  case pathlist of
+    [] -> []
+    hd :: [] -> []
     (a,b) :: (c,d) :: tl ->
       List.append 
         (if b == c then
@@ -26,8 +28,12 @@ fromlasttofirst tasklist2 =
           []
         )
         (fromlasttofirst tl)
-    _ ->
-      tasklist2
+
+shortcut : List (Int, Int) -> List (Int, Int) -> List (Int, Int)
+shortcut pathlist filteredlist = 
+  List.concat (List.map (\ (a,b) -> 
+    List.filter (\ (c,d) -> b == d && a /= c ) pathlist ) filteredlist)
+
 
 
 tasklist : List (Int, Int)

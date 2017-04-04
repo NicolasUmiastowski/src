@@ -12,13 +12,23 @@ all =
             [ test "shortcut fromlasttofirst" <|
               \() ->
                 let 
-                  tasklist = [(1,2),(2,3),(3,0),(2,4),(3,4),(4,5)]
+                  pathlist = [(1,2),(2,3),(3,0),(2,4),(3,4),(4,5)]
                 in
-                  tasklist
+                  pathlist
                     |> fromlasttofirst
                     |> Expect.equal
-                      [(1,2),(2,3)]
+                      [(1,2),(2,3),(3,4),(4,5)]
 
+            , test "shortcut" <|
+              \() ->
+                let 
+                  pathlist = [(1,2),(2,3),(3,0),(2,4),(3,4),(4,5)]
+                  filteredlist = [(1,2),(2,3),(3,4),(4,5)]
+                in
+                  filteredlist
+                    |> shortcut pathlist
+                    |> Expect.equal
+                      [(2,4)]
 
             , test "tupleswithzero" <|
                 \() ->
