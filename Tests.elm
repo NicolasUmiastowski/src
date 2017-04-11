@@ -9,7 +9,17 @@ all : Test
 all =
     describe "Suite"
         [ describe "Unit tests"
-            [ test "shortcut fromlasttofirst" <|
+            [ {- test "shortcut totalfunction" <|
+              \() ->
+                let 
+                  pathlist = [(1,2),(2,3),(3,0),(2,4),(3,4),(4,5)]
+                in
+                  pathlist
+                    |> totalfunction
+                    |> Expect.equal
+                      [(1,2),(2,4),(4,5)]
+
+            , -} test "shortcut fromlasttofirst" <|
               \() ->
                 let 
                   pathlist = [(1,2),(2,3),(3,0),(2,4),(3,4),(4,5)]
@@ -19,16 +29,49 @@ all =
                     |> Expect.equal
                       [(1,2),(2,3),(3,4),(4,5)]
 
-            , test "shortcut" <|
+            , test "shortcut listfilter" <|
               \() ->
                 let 
                   pathlist = [(1,2),(2,3),(3,0),(2,4),(3,4),(4,5)]
                   filteredlist = [(1,2),(2,3),(3,4),(4,5)]
                 in
                   filteredlist
-                    |> shortcut pathlist
+                    |> listfilter pathlist
                     |> Expect.equal
                       [(2,4)]
+
+            , test "shortcut shortpath" <|
+              \() ->
+                let 
+                  pathlist = [(1,2),(2,3),(3,4),(4,5)]
+                  shortvalue = [(2,4)]
+                in
+                  shortpath pathlist shortvalue []
+                    |> Expect.equal
+                      [(1,2),(4,5)]
+
+            , test "shortcut shortpath2" <|
+              \() ->
+                let 
+                  pathlist = [(1,2),(4,5)]
+                  shortvalue = [(2,4)]
+                in
+                  pathlist
+                    |> shortpath2 shortvalue
+                    |> Expect.equal
+                      [(1,2),(2,4),(4,5)]
+
+            {-, test "shortcut full shortpath" <|
+              \() ->
+                let 
+                  pathlist = [(1,2),(2,3),(3,4),(4,5)]
+                  shortvalue = [(2,4)]
+                in
+                  shortvalue
+                    |> shortpath pathlist
+                    |> shortpath2 shortvalue
+                    |> Expect.equal
+                      [(1,2),(2,4),(4,5)] -}
 
             , test "tupleswithzero" <|
                 \() ->
