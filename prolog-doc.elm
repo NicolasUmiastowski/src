@@ -1,44 +1,19 @@
------
-(1,2), (2,3), (2,5), (3,4), (4,5), (5,6)
-fromlasttofirst --done--
-(a,b), (c,d) => b = c
-(1,2), (2,3),(3,4), (4,5), (5,6)  
------
-(1,2), (2,3), (2,5), (3,4), (4,5), (5,6)
-listfilter --done--
-(a,b), (c,d) => b = d && a /= c  
-(2,5) 
------
- shortvalue  fromlastofirst
- (2,5)       (1,2), (2,3),(3,4), (4,5), (5,6)
-shortpath1
-(a,b), (c,d), (e,f)  => d = e || b = c
-(1,2), (3,4)), (5,6) 
+[(1,2),(2,3),(2,4),(3,4),(4,5),(5,6),(5,7),(6,7),(7,8),(8,9)] pathlist 1
+removeshortcut
+[(5,7),(2,4)] removeshortcut    2
 
- shortvalue  fromlastofirst
- [(2,5)]       [(1,2),(3,4),(5,6)]
-shortpath2
-[(a,b)] :: [(c,d)] :: tl => if (c /= b) then ([(a,b)] :: shortvalue :: tl)
-[(1,2),(2,5),(5,6)]
 
------
- fromlasttofirst
-listlength
-5
------
- shortpath
-listlength
-3
------
- listlength listlength
-min
- shortpath   
+[(2,4),(5,7)]  removeshortcut    2
+[(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(7,8)] pathlist 1
+valuestoreplace
+[(1,2),(4,5),(7,8)] valuestoreplace 3
 
---------------refactoring 10-04-2017-------------------
- [(2,4)] -> [(1,2),(2,3),(3,4),(4,5)]
- -> [(1,2),(2,4),(4,5)]
-shortpath3
-[(1,2),(2,4),(4,5)]
+
+[(1,2),(4,5) ,(7,8)] valuestoreplace 3
+[(2,4),(5,7)] removeshortcut 2
+insertshortcuts
+[(1,2),(2,4),(4,5),(5,7),(7,8)] insertshortcuts 4
+
 
 --------recursive---------
 Fromlasttofirst [(1,2),(2,3) (3,0),(2,4),(3,4),(4,5)]  
@@ -57,16 +32,40 @@ Fromlasttofirst [(1,2),(2,3) (3,0),(2,4),(3,4),(4,5)]
 pathlist = [(1,2),(2,3),(3,4),(4,5)]
 shortvalue = [(2,4)]
 
-shortpath [(2,3),(3,4),(4,5)] [(2,4)] ([] ++ [(1,2)])
-shortpath [(2,3),(3,4),(4,5)] [(2,4)] [(1,2)]
+--shortpath [(2,3),(3,4),(4,5)] ([] ++ [(1,2)])
+shortpath [(2,3),(3,4),(4,5)] [(1,2)]
 
-shortpath [(3,4),(4,5)] [(2,4)] ([(1,2)] ++ [])
-shortpath [(3,4),(4,5)] [(2,4)] [(1,2)]
+--shortpath [(3,4),(4,5)] ([(1,2)] ++ [])
+shortpath [(3,4),(4,5)] [(1,2)]
 
-shortpath [(4,5)] [(2,4)] ([(1,2)] ++ [])
-shortpath [(4,5)] [(2,4)] [(1,2)]
+--shortpath [(4,5)] ([(1,2)] ++ [])
+shortpath [(4,5)] [(1,2)]
 
-shortpath [] [(2,4)] ([(1,2)] ++ [(4,5)])
-shortpath [] [(2,4)] [(1,2),(2,4)]
+--shortpath [] ([(1,2)] ++ [(4,5)])
+shortpath [] [(1,2),(2,4)]
 
 [(1,2),(2,4)]
+(List.filter (\(c,d) ->  
+             (c >= a && d <= b )  ) pathlist)
+ 
+valuestoreplace
+  shortvalue = [(2,4),(5,7)]
+  pathlist = [(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(8,9)]
+  accum = []
+
+valuestoreplace
+  (2,4)                                       "shortvalue"
+  [(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(8,9)] "pathlist"
+  [(5,7)]                                      "tl"
+  [] ++ [(2,3),(3,4)]                          "accum"
+
+valuestoreplace
+  (5,7)                                       "shortvalue"
+  [(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(8,9)]  "pathlist"
+  []                                           "tl"
+  [(2,3),(3,4)] ++ [(5,6),(6,7)]               "accum"
+
+valuestoreplace
+  []                                           "shortvalue"
+  [(2,3),(3,4),(5,6),(6,7)]                    "accum"
+ 
