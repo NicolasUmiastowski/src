@@ -67,7 +67,7 @@ viewModel model =
      ,br [ ] [ ]
      ,input
       [type_ "Quantity"
-     ,placeholder "Veuillez saisir votre quantité"
+     ,placeholder "Veuillez saisir votre quantité !!!"
      ,onInput Sendquantity]
      [ ]
 
